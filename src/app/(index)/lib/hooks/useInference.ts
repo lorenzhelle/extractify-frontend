@@ -1,6 +1,7 @@
 import { useState } from "react";
-import axios, { AxiosError } from "axios";
 import { useSetupStore } from "../store";
+import { entityLinking } from "@/app/api/entity-linking/action";
+import { checkDomain } from "@/app/api/out-of-domain/action";
 
 export const useInference = () => {
   const [query, setQuery] = useState("");
@@ -31,12 +32,8 @@ export const useInference = () => {
     let inDomain = false;
     try {
       if (outOfDomainCheck) {
-        const response = await axios.post("/api/check_domain", {
-          query,
-          model: selectedLLM,
-          domain: selectedDomain,
-        });
-        inDomain = response.data.inDomain;
+        const response = await checkDomain(query, selectedLLM, selectedDomain);
+        inDomain = response.inDomain;
         setResult({
           status: inDomain ? "success" : "warning",
           message: inDomain ? "Query is in domain" : "Query is out of domain",
@@ -49,23 +46,18 @@ export const useInference = () => {
       }
 
       setButtonState("linking");
-      const entityResponse = await axios.post("/api/recognize-filters", {
-        message: query,
-        schema: jsonSchema,
-        model: selectedLLM,
-      });
-      setEntities(entityResponse.data);
+      const entityData = await entityLinking(query, jsonSchema, selectedLLM);
+      setEntities(entityData);
       setButtonState("done");
     } catch (error) {
-      console.error("Error checking domain:", error);
+      console.error("Error in inference:", error);
 
-      if (error instanceof AxiosError) {
-        const message = error.response?.data.detail || error.message;
-        setResult({
-          status: "error",
-          message: "Error checking domain: " + message,
-        });
-      }
+      setResult({
+        status: "error",
+        message:
+          "Error in inference: " +
+          (error instanceof Error ? error.message : String(error)),
+      });
     } finally {
       setIsLoading(false);
       setTimeout(() => setButtonState("idle"), 1000);
