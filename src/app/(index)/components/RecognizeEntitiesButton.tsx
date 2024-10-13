@@ -1,5 +1,6 @@
 import React from "react";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 type ButtonState = "idle" | "checking" | "linking" | "done";
 
@@ -15,10 +16,10 @@ const RecognizeEntitiesButton: React.FC<RecognizeEntitiesButtonProps> = ({
   disabled,
 }) => {
   return (
-    <button
+    <Button
       type="submit"
       className={cn(
-        "w-full py-2 px-4 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors disabled:bg-blue-300 relative overflow-hidden",
+        "w-full py-2 transition-colors relative overflow-hidden",
         buttonState !== "idle" && "cursor-not-allowed"
       )}
       disabled={isLoading || disabled || buttonState !== "idle"}
@@ -43,7 +44,7 @@ const RecognizeEntitiesButton: React.FC<RecognizeEntitiesButtonProps> = ({
       >
         Recognize Entities
       </span>
-    </button>
+    </Button>
   );
 };
 
