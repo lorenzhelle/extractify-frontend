@@ -89,6 +89,7 @@ const Inference: React.FC = () => {
         {result && (
           <ResultAlert status={result.status} message={result.message} />
         )}
+
         {entities && <EntitiesResult entities={entities} />}
       </form>
     </div>

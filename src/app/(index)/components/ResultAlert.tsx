@@ -9,6 +9,7 @@ interface ResultAlertProps {
 }
 
 const ResultAlert: React.FC<ResultAlertProps> = ({ status, message }) => {
+  console.log(status, message);
   if (!status || !message) return null;
 
   const variantMap: Record<ResultStatus, "default" | "destructive"> = {

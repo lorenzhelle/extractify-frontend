@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import React from "react";
 import { Task, useSetupStore } from "../lib/store";
-import { DEFAULT_SCHEMAS } from "../lib/constants";
+import { DEFAULT_SCHEMAS, ALTERNATIVE_SCHEMAS } from "../lib/constants";
 
 export const tasks: {
   id: Task;
@@ -16,6 +16,7 @@ export const tasks: {
   description: string;
   icon: React.ReactNode;
   defaultSchema: string;
+  schemas: { label: string; value: string }[];
 }[] = [
   {
     id: "query_category",
@@ -23,6 +24,16 @@ export const tasks: {
     description: "Classify queries into predefined categories",
     icon: <TagIcon className="h-6 w-6" />,
     defaultSchema: DEFAULT_SCHEMAS["query_category"],
+    schemas: [
+      {
+        label: "Category Classification",
+        value: DEFAULT_SCHEMAS["query_category"],
+      },
+      {
+        label: "Category Classification More Categories",
+        value: ALTERNATIVE_SCHEMAS["query_category"],
+      },
+    ],
   },
   {
     id: "query_segmentation",
@@ -30,6 +41,16 @@ export const tasks: {
     description: "Identify matching attribute value pairs in queries",
     icon: <ScissorsIcon className="h-6 w-6" />,
     defaultSchema: DEFAULT_SCHEMAS["query_segmentation"],
+    schemas: [
+      {
+        label: "Basic Query Segmentation",
+        value: DEFAULT_SCHEMAS["query_segmentation"],
+      },
+      {
+        label: "Multimedia Products Query Segmentation (German)",
+        value: ALTERNATIVE_SCHEMAS["query_segmentation"],
+      },
+    ],
   },
   {
     id: "out_of_domain",
@@ -37,6 +58,12 @@ export const tasks: {
     description: "Identify queries outside your domain",
     icon: <SearchIcon className="h-6 w-6" />,
     defaultSchema: DEFAULT_SCHEMAS["out_of_domain"],
+    schemas: [
+      {
+        label: "Out of Domain Detection",
+        value: DEFAULT_SCHEMAS["out_of_domain"],
+      },
+    ],
   },
   {
     id: "custom_schema",
@@ -44,6 +71,12 @@ export const tasks: {
     description: "Define your own extraction schema",
     icon: <FileJsonIcon className="h-6 w-6" />,
     defaultSchema: DEFAULT_SCHEMAS["custom_schema"],
+    schemas: [
+      {
+        label: "Empty Schema",
+        value: DEFAULT_SCHEMAS["custom_schema"],
+      },
+    ],
   },
 ];
 

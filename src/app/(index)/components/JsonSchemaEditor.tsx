@@ -7,6 +7,61 @@ import { useSetupStore } from "../lib/store";
 import Monaco from "./Monaco";
 import { tasks } from "./TaskSelection";
 import { DEFAULT_JSON_SCHEMA, MONACO_DEFAULT_OPTIONS } from "../lib/constants";
+import { Button } from "@/components/ui/button";
+
+interface SchemaSelectionProps {
+  onSelectSchema: (schema: string) => void;
+  currentTask: string | null;
+}
+
+const SchemaSelection: React.FC<SchemaSelectionProps> = ({
+  onSelectSchema,
+  currentTask,
+}) => {
+  // If no task is selected, don't show anything
+  if (!currentTask) {
+    return null;
+  }
+
+  // Find the current task and its schemas
+  const currentTaskObj = tasks.find((task) => task.id === currentTask);
+
+  // If task not found or has no schemas, don't show anything
+  if (
+    !currentTaskObj ||
+    !currentTaskObj.schemas ||
+    currentTaskObj.schemas.length === 0
+  ) {
+    return null;
+  }
+
+  // Determine if we have multiple schemas to show
+  const hasMultipleSchemas = currentTaskObj.schemas.length > 1;
+
+  return (
+    <div className="mb-4">
+      <p className="text-sm text-gray-600 mb-2">
+        {hasMultipleSchemas
+          ? "Select a schema for current task:"
+          : "Default schema for current task:"}
+      </p>
+      <div className="flex flex-wrap gap-2">
+        {currentTaskObj.schemas.map((schema, index) => (
+          <Button
+            key={index}
+            variant="outline"
+            size="sm"
+            type="button"
+            onClick={() => onSelectSchema(schema.value)}
+            className="text-xs"
+          >
+            {schema.label}
+          </Button>
+        ))}
+      </div>
+    </div>
+  );
+};
 
 const JsonSchemaEditor: React.FC = () => {
   const [jsonInput, setJsonInput] = useState("");
@@ -68,6 +123,11 @@ const JsonSchemaEditor: React.FC = () => {
     setActiveTab(value);
   };
 
+  const handleSelectDefaultSchema = (schema: string) => {
+    setDirectSchema(schema);
+    setJsonSchema(schema);
+  };
+
   return (
     <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
       <p className="text-sm text-gray-600 mb-4">
@@ -87,6 +147,10 @@ const JsonSchemaEditor: React.FC = () => {
       </TabsList>
       <TabsContent value="direct">
         <div className="w-full border border-gray-300 rounded-md p-4">
+          <SchemaSelection
+            onSelectSchema={handleSelectDefaultSchema}
+            currentTask={task}
+          />
           <label
             htmlFor="direct-schema"
             className="block text-sm font-medium text-gray-700 mb-2"

@@ -11,7 +11,7 @@ const EXAMPLE_QUERIES: Record<Task, string[]> = {
   query_segmentation: [
     "Find hotels in Paris with free wifi",
     "Show me red shoes under $50",
-    "Iphone 16 pro in black",
+    "Iphone 15 pro in black",
     "Restaurants with outdoor seating that serve Italian food",
   ],
   out_of_domain: [
