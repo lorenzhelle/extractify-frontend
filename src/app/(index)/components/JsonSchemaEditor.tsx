@@ -4,6 +4,7 @@ import React, { useCallback, useState } from "react";
 import Monaco from "./Monaco";
 import { useSetupStore } from "../lib/store";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { cn } from "@/lib/utils";
 
 const defaultJsonSchema = `{
   "$schema": "http://json-schema.org/draft-07/schema#",
@@ -17,10 +18,13 @@ const defaultJsonSchema = `{
 
 const JsonSchemaEditor: React.FC = () => {
   const [jsonInput, setJsonInput] = useState("");
-  const { setJsonSchema, jsonSchema } = useSetupStore();
+  const { setJsonSchema, jsonSchema, task } = useSetupStore();
   const [directSchema, setDirectSchema] = useState(
     jsonSchema !== "" ? jsonSchema : defaultJsonSchema
   );
+  const [activeTab, setActiveTab] = useState<string>("direct");
+
+  const isCustomSchema = task === "custom_schema";
 
   const transformer = useCallback(
     async (value: string) => {
@@ -56,16 +60,29 @@ const JsonSchemaEditor: React.FC = () => {
     }
   };
 
+  const handleTabChange = (value: string) => {
+    if (value === "infer" && !isCustomSchema) {
+      return;
+    }
+    setActiveTab(value);
+  };
+
   return (
-    <Tabs defaultValue="direct" className="w-full">
+    <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
       <p className="text-sm text-gray-600 mb-4">
         Choose how you want to create your JSON schema used to identify and link
-        entities in your document. You can either infer it from a JSON sample or
-        enter it directly.
+        entities in your document. The predefined tasks have a default schema
+        which can be adapted to your use case.
       </p>
       <TabsList className="grid w-full grid-cols-2">
         <TabsTrigger value="direct">Enter Schema Directly</TabsTrigger>
-        <TabsTrigger value="infer">Infer from JSON</TabsTrigger>
+        <TabsTrigger
+          value="infer"
+          disabled={!isCustomSchema}
+          className={cn(!isCustomSchema && "opacity-50 cursor-not-allowed")}
+        >
+          Infer from JSON
+        </TabsTrigger>
       </TabsList>
       <TabsContent value="direct">
         <div className="w-full border border-gray-300 rounded-md p-4">
