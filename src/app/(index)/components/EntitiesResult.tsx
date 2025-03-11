@@ -86,7 +86,7 @@ export const EntitiesResult = ({
         <Button variant="outline" type="button">
           <DownloadIcon className="w-4 h-4 mr-2" />
           <a href={dataUri} download="entities.json">
-            Download JSON
+            JSON
           </a>
         </Button>
       </div>
