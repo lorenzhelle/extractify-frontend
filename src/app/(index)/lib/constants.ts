@@ -25,8 +25,8 @@ export const LLM_MODELS: LLMModel[] = [
   "MISTRAL_SMALL",
   "MISTRAL_MIXTRAL_8x22B",
   "GOOGLE_GEMINI_PRO",
-  "LLAMA_3_8B",
-  "LLAMA_3_70B",
+  // "LLAMA_3_8B",
+  // "LLAMA_3_70B",
 ];
 
 export const DEFAULT_SCHEMAS: Record<Task, string> = {
