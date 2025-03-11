@@ -7,6 +7,7 @@ import RecognizeEntitiesButton from "../RecognizeEntitiesButton";
 import Tag from "../Tag";
 import { MissingSetupAlert } from "./MissingSetupAlert";
 import { useSetupStore } from "../../lib/store";
+import ExampleQueries from "./ExampleQueries";
 
 const Inference: React.FC = () => {
   const {
@@ -23,6 +24,10 @@ const Inference: React.FC = () => {
 
   const showAlert = !selectedLLM || !jsonSchema;
   const task = useSetupStore((state) => state.task);
+
+  const handleSelectExampleQuery = (exampleQuery: string) => {
+    setQuery(exampleQuery);
+  };
 
   if (showAlert) {
     return <MissingSetupAlert />;
@@ -42,6 +47,12 @@ const Inference: React.FC = () => {
           >
             Query
           </label>
+          {task && (
+            <ExampleQueries
+              task={task}
+              onSelectQuery={handleSelectExampleQuery}
+            />
+          )}
           <textarea
             id="query"
             value={query}

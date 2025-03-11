@@ -26,6 +26,9 @@ export const useInference = () => {
     setResult(null);
     try {
       setButtonState("linking");
+      if (!selectedLLM) {
+        throw new Error("LLM not selected");
+      }
       const entityData = await entityLinking(query, jsonSchema, selectedLLM);
       setEntities(entityData);
       setButtonState("done");
