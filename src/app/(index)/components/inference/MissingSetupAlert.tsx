@@ -6,8 +6,8 @@ export const MissingSetupAlert = () => (
     <ExclamationTriangleIcon className="h-4 w-4" />
     <AlertTitle>Incomplete Setup</AlertTitle>
     <AlertDescription>
-      Please select an LLM, enter a domain and a JSON Schema in the setup page
-      before proceeding with the domain check.
+      Please select an LLM, a task and a JSON Schema in the setup page before
+      proceeding with the inference.
     </AlertDescription>
   </Alert>
 );
