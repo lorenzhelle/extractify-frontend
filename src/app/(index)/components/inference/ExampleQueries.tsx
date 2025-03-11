@@ -11,12 +11,16 @@ const EXAMPLE_QUERIES: Record<Task, string[]> = {
   query_segmentation: [
     "Find hotels in Paris with free wifi",
     "Show me red shoes under $50",
+    "Iphone 16 pro in black",
     "Restaurants with outdoor seating that serve Italian food",
   ],
   out_of_domain: [
     "What's the weather like today?",
-    "Tell me a joke about programming",
+    "I am looking for a new Iphone 16.",
+    "When comes the next season of Lord of the Rings?",
     "Who won the last World Cup?",
+    "How much is Photoshop per month for a student?",
+    "I have troubles with my Adobe creative cloud subscription",
   ],
   custom_schema: [
     "Extract entities from this custom input",

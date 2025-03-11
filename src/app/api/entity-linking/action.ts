@@ -7,7 +7,8 @@ const BACKEND_URL = process.env.BACKEND_URL;
 export async function entityLinking(
   message: string,
   schema: string,
-  model: LLMModel
+  model: LLMModel,
+  domainDefinition?: string
 ) {
   try {
     if (!BACKEND_URL) {
@@ -24,6 +25,7 @@ export async function entityLinking(
         message,
         schema,
         model,
+        domain_definition: domainDefinition || undefined,
       }),
     });
 

@@ -2,12 +2,13 @@
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import React from "react";
 import { useInference } from "../../lib/hooks/useInference";
+import { useSetupStore } from "../../lib/store";
 import { EntitiesResult } from "../EntitiesResult";
 import RecognizeEntitiesButton from "../RecognizeEntitiesButton";
 import Tag from "../Tag";
-import { MissingSetupAlert } from "./MissingSetupAlert";
-import { useSetupStore } from "../../lib/store";
+import { DomainDefinition } from "./DomainDefinition";
 import ExampleQueries from "./ExampleQueries";
+import { MissingSetupAlert } from "./MissingSetupAlert";
 
 const Inference: React.FC = () => {
   const {
@@ -20,13 +21,19 @@ const Inference: React.FC = () => {
     handleSubmit,
     selectedLLM,
     jsonSchema,
+    task,
   } = useInference();
 
   const showAlert = !selectedLLM || !jsonSchema;
-  const task = useSetupStore((state) => state.task);
+  const { domainDefinition, setDomainDefinition } = useSetupStore();
+  const isOutOfDomain = task === "out_of_domain";
 
   const handleSelectExampleQuery = (exampleQuery: string) => {
     setQuery(exampleQuery);
+  };
+
+  const handleSelectDomainDefinition = (definition: string) => {
+    setDomainDefinition(definition);
   };
 
   if (showAlert) {
@@ -39,6 +46,13 @@ const Inference: React.FC = () => {
         <Tag text={selectedLLM} />
         {task && <Tag text={task} />}
       </div>
+      {isOutOfDomain && (
+        <DomainDefinition
+          handleSelectDomainDefinition={handleSelectDomainDefinition}
+          domainDefinition={domainDefinition}
+          setDomainDefinition={setDomainDefinition}
+        />
+      )}
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label
@@ -61,10 +75,16 @@ const Inference: React.FC = () => {
             placeholder="Enter your content here"
           />
         </div>
+
         <RecognizeEntitiesButton
           isLoading={isLoading}
           buttonState={buttonState}
-          disabled={isLoading || !query || buttonState !== "idle"}
+          disabled={
+            isLoading ||
+            !query ||
+            buttonState !== "idle" ||
+            (isOutOfDomain && !domainDefinition)
+          }
         />
         {result?.status === "warning" && (
           <Alert variant={"destructive"}>

@@ -16,7 +16,7 @@ export const useInference = () => {
     "idle" | "checking" | "linking" | "done"
   >("idle");
 
-  const { LLM: selectedLLM, jsonSchema } = useSetupStore();
+  const { LLM: selectedLLM, jsonSchema, task, domainDefinition } = useSetupStore();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,7 +29,12 @@ export const useInference = () => {
       if (!selectedLLM) {
         throw new Error("LLM not selected");
       }
-      const entityData = await entityLinking(query, jsonSchema, selectedLLM);
+      const entityData = await entityLinking(
+        query, 
+        jsonSchema, 
+        selectedLLM, 
+        task === "out_of_domain" ? domainDefinition : undefined
+      );
       setEntities(entityData);
       setButtonState("done");
     } catch (error) {
@@ -57,5 +62,7 @@ export const useInference = () => {
     handleSubmit,
     selectedLLM,
     jsonSchema,
+    task,
+    domainDefinition,
   };
 };
