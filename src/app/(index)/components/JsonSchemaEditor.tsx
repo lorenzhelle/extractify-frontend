@@ -6,22 +6,13 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useSetupStore } from "../lib/store";
 import Monaco from "./Monaco";
 import { tasks } from "./TaskSelection";
-
-const defaultJsonSchema = `{
-  "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "Generated schema for Root",
-  "type": "object",
-  "properties": {
-  },
-  "required": [
-  ]
-}`;
+import { DEFAULT_JSON_SCHEMA, MONACO_DEFAULT_OPTIONS } from "../lib/constants";
 
 const JsonSchemaEditor: React.FC = () => {
   const [jsonInput, setJsonInput] = useState("");
   const { setJsonSchema, jsonSchema, task } = useSetupStore();
   const [directSchema, setDirectSchema] = useState(
-    jsonSchema !== "" ? jsonSchema : defaultJsonSchema
+    jsonSchema !== "" ? jsonSchema : DEFAULT_JSON_SCHEMA
   );
   const [activeTab, setActiveTab] = useState<string>("direct");
 
@@ -107,10 +98,7 @@ const JsonSchemaEditor: React.FC = () => {
             value={directSchema}
             onChange={handleDirectSchemaChange}
             height="300px"
-            options={{
-              minimap: { enabled: false },
-              automaticLayout: true,
-            }}
+            options={MONACO_DEFAULT_OPTIONS}
           />
         </div>
       </TabsContent>
@@ -128,10 +116,7 @@ const JsonSchemaEditor: React.FC = () => {
               value={jsonInput}
               onChange={handleJsonInputChange}
               height="300px"
-              options={{
-                minimap: { enabled: false },
-                automaticLayout: true,
-              }}
+              options={MONACO_DEFAULT_OPTIONS}
             />
           </div>
           <div className="w-full border border-gray-300 rounded-md p-4">
@@ -147,8 +132,7 @@ const JsonSchemaEditor: React.FC = () => {
               onChange={(schema) => setJsonSchema(schema || "")}
               height="300px"
               options={{
-                minimap: { enabled: false },
-                automaticLayout: true,
+                ...MONACO_DEFAULT_OPTIONS,
                 readOnly: true,
               }}
             />

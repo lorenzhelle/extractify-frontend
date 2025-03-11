@@ -1,9 +1,6 @@
 import React from "react";
-
-interface KeyValuePair {
-  attribute: string;
-  value: string;
-}
+import { KeyValuePair } from "../lib/types";
+import { ATTRIBUTE_COLORS } from "../lib/constants";
 
 interface KeyValuePairsVisualizationProps {
   pairs: KeyValuePair[];
@@ -18,22 +15,11 @@ const KeyValuePairsVisualization: React.FC<KeyValuePairsVisualizationProps> = ({
 
   // Generate a unique color for each attribute
   const getAttributeColor = (attribute: string) => {
-    const colors = [
-      "bg-blue-100 text-blue-800 border-blue-200",
-      "bg-green-100 text-green-800 border-green-200",
-      "bg-purple-100 text-purple-800 border-purple-200",
-      "bg-yellow-100 text-yellow-800 border-yellow-200",
-      "bg-pink-100 text-pink-800 border-pink-200",
-      "bg-indigo-100 text-indigo-800 border-indigo-200",
-      "bg-red-100 text-red-800 border-red-200",
-      "bg-teal-100 text-teal-800 border-teal-200",
-    ];
-
     // Simple hash function to determine color index
     const index =
       attribute.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0) %
-      colors.length;
-    return colors[index];
+      ATTRIBUTE_COLORS.length;
+    return ATTRIBUTE_COLORS[index];
   };
 
   return (

@@ -4,11 +4,7 @@ import { Button } from "@/components/ui/button";
 import { DownloadIcon } from "@radix-ui/react-icons";
 import KeyValuePairsVisualization from "./KeyValuePairsVisualization";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
-interface KeyValuePair {
-  attribute: string;
-  value: string;
-}
+import { KeyValuePair } from "../lib/types";
 
 export const EntitiesResult = ({
   entities,

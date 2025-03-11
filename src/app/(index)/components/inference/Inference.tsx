@@ -1,5 +1,4 @@
 "use client";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import React from "react";
 import { useInference } from "../../lib/hooks/useInference";
 import { useSetupStore } from "../../lib/store";
@@ -9,6 +8,7 @@ import Tag from "../Tag";
 import { DomainDefinition } from "./DomainDefinition";
 import ExampleQueries from "./ExampleQueries";
 import { MissingSetupAlert } from "./MissingSetupAlert";
+import ResultAlert from "../ResultAlert";
 
 const Inference: React.FC = () => {
   const {
@@ -86,15 +86,8 @@ const Inference: React.FC = () => {
             (isOutOfDomain && !domainDefinition)
           }
         />
-        {result?.status === "warning" && (
-          <Alert variant={"destructive"}>
-            <AlertDescription>{result.message}</AlertDescription>
-          </Alert>
-        )}
-        {result?.status === "error" && (
-          <Alert variant={"destructive"}>
-            <AlertDescription>{result.message}</AlertDescription>
-          </Alert>
+        {result && (
+          <ResultAlert status={result.status} message={result.message} />
         )}
         {entities && <EntitiesResult entities={entities} />}
       </form>
