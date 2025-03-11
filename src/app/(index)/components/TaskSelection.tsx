@@ -8,42 +8,55 @@ import {
 } from "lucide-react";
 import React from "react";
 import { Task, useSetupStore } from "../lib/store";
+import { DEFAULT_SCHEMAS } from "../lib/constants";
 
-const tasks: {
+export const tasks: {
   id: Task;
   title: string;
   description: string;
   icon: React.ReactNode;
+  defaultSchema: string;
 }[] = [
   {
     id: "query_category",
     title: "Query Category Classification",
     description: "Classify queries into predefined categories",
     icon: <TagIcon className="h-6 w-6" />,
+    defaultSchema: DEFAULT_SCHEMAS["query_category"],
   },
   {
     id: "query_segmentation",
     title: "Query Segmentation",
     description: "Identify matching attribute value pairs in queries",
     icon: <ScissorsIcon className="h-6 w-6" />,
+    defaultSchema: DEFAULT_SCHEMAS["query_segmentation"],
   },
   {
     id: "out_of_domain",
     title: "Out of Domain Detection",
     description: "Identify queries outside your domain",
     icon: <SearchIcon className="h-6 w-6" />,
+    defaultSchema: DEFAULT_SCHEMAS["out_of_domain"],
   },
   {
     id: "custom_schema",
     title: "Custom Schema",
     description: "Define your own extraction schema",
     icon: <FileJsonIcon className="h-6 w-6" />,
+    defaultSchema: DEFAULT_SCHEMAS["custom_schema"],
   },
 ];
 
 const TaskSelection: React.FC = () => {
   const task = useSetupStore((state) => state.task);
   const setTask = useSetupStore((state) => state.setTask);
+  const setJsonSchema = useSetupStore((state) => state.setJsonSchema);
+
+  const handleTaskSelection = (selectedTask: Task) => {
+    setTask(selectedTask);
+    // Set the default schema for the selected task
+    setJsonSchema(DEFAULT_SCHEMAS[selectedTask]);
+  };
 
   return (
     <div className="w-full space-y-4">
@@ -59,7 +72,7 @@ const TaskSelection: React.FC = () => {
                 ? "border-blue-500 bg-blue-50 shadow-md"
                 : "border-gray-200 bg-white"
             )}
-            onClick={() => setTask(item.id as Task)}
+            onClick={() => handleTaskSelection(item.id as Task)}
           >
             {task === item.id && (
               <div className="absolute top-3 right-3 text-blue-500">

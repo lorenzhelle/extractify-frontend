@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useCallback, useState } from "react";
-import Monaco from "./Monaco";
-import { useSetupStore } from "../lib/store";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
+import React, { useCallback, useEffect, useState } from "react";
+import { useSetupStore } from "../lib/store";
+import Monaco from "./Monaco";
+import { tasks } from "./TaskSelection";
 
 const defaultJsonSchema = `{
   "$schema": "http://json-schema.org/draft-07/schema#",
@@ -25,6 +26,15 @@ const JsonSchemaEditor: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>("direct");
 
   const isCustomSchema = task === "custom_schema";
+
+  // Update schema when task changes
+  useEffect(() => {
+    if (task) {
+      const defaultSchema = tasks.find((t) => t.id === task)?.defaultSchema;
+      setDirectSchema(defaultSchema || "");
+      setJsonSchema(defaultSchema || "");
+    }
+  }, [task, setJsonSchema]);
 
   const transformer = useCallback(
     async (value: string) => {

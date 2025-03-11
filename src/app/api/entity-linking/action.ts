@@ -1,11 +1,13 @@
 "use server";
 
+import { LLMModel } from "@/app/(index)/lib/constants";
+
 const BACKEND_URL = process.env.BACKEND_URL;
 
 export async function entityLinking(
   message: string,
   schema: string,
-  model: string
+  model: LLMModel
 ) {
   try {
     if (!BACKEND_URL) {
@@ -16,6 +18,7 @@ export async function entityLinking(
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        accept: "application/json",
       },
       body: JSON.stringify({
         message,
@@ -29,10 +32,6 @@ export async function entityLinking(
     }
 
     const data = await response.json();
-
-    // Optionally revalidate the path if needed
-    // revalidatePath('/some-path')
-
     return data;
   } catch (error) {
     console.error("Error in entity linking:", error);

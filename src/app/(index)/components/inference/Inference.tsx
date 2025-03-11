@@ -1,11 +1,12 @@
 "use client";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import React from "react";
+import { useInference } from "../../lib/hooks/useInference";
 import { EntitiesResult } from "../EntitiesResult";
 import RecognizeEntitiesButton from "../RecognizeEntitiesButton";
 import Tag from "../Tag";
 import { MissingSetupAlert } from "./MissingSetupAlert";
-import { useInference } from "../../lib/hooks/useInference";
+import { useSetupStore } from "../../lib/store";
 
 const Inference: React.FC = () => {
   const {
@@ -17,13 +18,11 @@ const Inference: React.FC = () => {
     buttonState,
     handleSubmit,
     selectedLLM,
-    selectedDomain,
     jsonSchema,
-    outOfDomainCheck,
   } = useInference();
 
-  const showAlert =
-    !selectedLLM || !jsonSchema || (outOfDomainCheck && !selectedDomain);
+  const showAlert = !selectedLLM || !jsonSchema;
+  const task = useSetupStore((state) => state.task);
 
   if (showAlert) {
     return <MissingSetupAlert />;
@@ -33,9 +32,8 @@ const Inference: React.FC = () => {
     <div className="w-full space-y-4">
       <div className="flex justify-start items-center space-x-2">
         <Tag text={selectedLLM} />
-        {!outOfDomainCheck ? <Tag text="No OOTD check" /> : null}
+        {task && <Tag text={task} />}
       </div>
-      {selectedDomain && outOfDomainCheck && <p>Domain: {selectedDomain}</p>}
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label
@@ -58,6 +56,11 @@ const Inference: React.FC = () => {
           disabled={isLoading || !query || buttonState !== "idle"}
         />
         {result?.status === "warning" && (
+          <Alert variant={"destructive"}>
+            <AlertDescription>{result.message}</AlertDescription>
+          </Alert>
+        )}
+        {result?.status === "error" && (
           <Alert variant={"destructive"}>
             <AlertDescription>{result.message}</AlertDescription>
           </Alert>

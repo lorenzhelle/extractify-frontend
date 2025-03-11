@@ -1,7 +1,6 @@
+import { entityLinking } from "@/app/api/entity-linking/action";
 import { useState } from "react";
 import { useSetupStore } from "../store";
-import { entityLinking } from "@/app/api/entity-linking/action";
-import { checkDomain } from "@/app/api/out-of-domain/action";
 
 export const useInference = () => {
   const [query, setQuery] = useState("");
@@ -17,34 +16,15 @@ export const useInference = () => {
     "idle" | "checking" | "linking" | "done"
   >("idle");
 
-  const {
-    LLM: selectedLLM,
-    domain: selectedDomain,
-    jsonSchema,
-    outOfDomainCheck,
-  } = useSetupStore();
+  const { LLM: selectedLLM, jsonSchema } = useSetupStore();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setEntities(null);
     setButtonState("checking");
-    let inDomain = false;
+    setResult(null);
     try {
-      if (outOfDomainCheck) {
-        const response = await checkDomain(query, selectedLLM, selectedDomain);
-        inDomain = response.inDomain;
-        setResult({
-          status: inDomain ? "success" : "warning",
-          message: inDomain ? "Query is in domain" : "Query is out of domain",
-        });
-      }
-
-      if (outOfDomainCheck && !inDomain) {
-        setButtonState("done");
-        return;
-      }
-
       setButtonState("linking");
       const entityData = await entityLinking(query, jsonSchema, selectedLLM);
       setEntities(entityData);
@@ -73,8 +53,6 @@ export const useInference = () => {
     buttonState,
     handleSubmit,
     selectedLLM,
-    selectedDomain,
     jsonSchema,
-    outOfDomainCheck,
   };
 };
