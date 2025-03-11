@@ -1,4 +1,4 @@
-import React, { use, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Monaco from "./Monaco";
 import { Button } from "@/components/ui/button";
 import { DownloadIcon } from "@radix-ui/react-icons";
@@ -21,18 +21,61 @@ export const EntitiesResult = ({
   )}`;
 
   const [selectedTab, setSelectedTab] = useState("json");
+  const [keyValuePairs, setKeyValuePairs] = useState<KeyValuePair[]>([]);
 
   const handleTabChange = (value: string) => {
     setSelectedTab(value);
   };
-  // Check if entities has a 'segments' property that's an array (for query_segmentation task)
-  const hasSegments = Array.isArray(entities.segments);
 
+  // Extract key-value pairs from the entities object
   useEffect(() => {
-    if (hasSegments) {
+    const pairs: KeyValuePair[] = [];
+
+    // Check if entities has a 'segments' property that's an array (for query_segmentation task)
+    if (Array.isArray(entities.segments)) {
+      setKeyValuePairs(entities.segments as KeyValuePair[]);
+      return;
+    }
+
+    // For simple JSON objects, extract key-value pairs recursively
+    const extractPairs = (obj: Record<string, unknown>, prefix = "") => {
+      Object.entries(obj).forEach(([key, value]) => {
+        const attributeName = prefix ? `${prefix}.${key}` : key;
+
+        if (
+          value !== null &&
+          typeof value === "object" &&
+          !Array.isArray(value)
+        ) {
+          // Recursively extract nested objects
+          extractPairs(value as Record<string, unknown>, attributeName);
+        } else if (
+          typeof value === "string" ||
+          typeof value === "number" ||
+          typeof value === "boolean"
+        ) {
+          // Add simple key-value pairs
+          pairs.push({
+            attribute: attributeName,
+            value: String(value),
+          });
+        }
+      });
+    };
+
+    extractPairs(entities);
+    setKeyValuePairs(pairs);
+  }, [entities]);
+
+  // Determine if we should show the visualization tab
+  const showVisualization = keyValuePairs.length > 0;
+
+  // Set default tab to visualization if key-value pairs are available
+  useEffect(() => {
+    if (showVisualization) {
       setSelectedTab("visualization");
     }
-  }, [hasSegments]);
+  }, [showVisualization]);
 
   return (
     <div className="mt-4 border border-gray-300 rounded-md p-4">
@@ -54,7 +97,7 @@ export const EntitiesResult = ({
         className="w-full"
       >
         <TabsList className="mb-4">
-          {hasSegments && (
+          {showVisualization && (
             <TabsTrigger value="visualization">Visualization</TabsTrigger>
           )}
           <TabsTrigger value="json">Raw JSON</TabsTrigger>
@@ -69,11 +112,9 @@ export const EntitiesResult = ({
           />
         </TabsContent>
 
-        {hasSegments && (
+        {showVisualization && (
           <TabsContent value="visualization">
-            <KeyValuePairsVisualization
-              pairs={entities.segments as KeyValuePair[]}
-            />
+            <KeyValuePairsVisualization pairs={keyValuePairs} />
           </TabsContent>
         )}
       </Tabs>
